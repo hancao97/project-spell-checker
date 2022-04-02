@@ -1,0 +1,14 @@
+{
+    "project-spell-checker：Configs": {
+		"prefix": "project-spell-checker",
+		"body": [
+            "{",
+			"   \"excludedFloders\": [\"node_modules\", \".git\", \".DS_Store\"],",
+			"   \"includedFileSubfixes\": [],",
+			"   \"excludedFileNames\": [],",
+			"   \"whiteList\": \"string,or,array\"",
+			"}"
+		],
+		"description": "project-spell-checker：Configs"
+	}
+}
