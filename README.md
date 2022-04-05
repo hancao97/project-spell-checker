@@ -1,65 +1,133 @@
-# project-spell-checker README
+# 使用指南「Chinese」
 
-This is the README for your extension "project-spell-checker". After writing up a brief description, we recommend including the following sections.
+`project-spell-checker` 是具备自定义能力并完成全项目拼写检查的 vscode 插件。
+具体能力分为三个：
+- 通过配置文件自定义插件扫描的文件范围
+- 通过 `tree-view` 显示各文件下的疑似拼写错误，并提示最多五个正确单词猜想
+- 通过 `web-view` 显示各个疑似拼写错误出现在哪些文件
 
-## Features
+提示：`tree-view` 与 `web-view` 均支持文件的快捷跳转
 
-Describe specific features of your extension including screenshots of your extension in action. Image paths are relative to this README file.
+## 配置文件
 
-For example if there is an image subfolder under your extension project workspace:
+配置文件 `spell-checker-config.json` 可以放置于 `.vscode` 或者 `.project` 目录下，插件会自动读取，新建文件后输入：`project-spell-checker` 按下 tab ，可以自动生成配置文件模板内容：
 
-\!\[feature X\]\(images/feature-x.png\)
+```
+{
+   "excludedFloders": ["node_modules", ".git", ".DS_Store"],
+   "includedFileSubfixes": [".vue", ".js"],
+   "excludedFileNames": ["en-US.js", "zh-CN.js", "iconfont.js", "zh.js", "en.js"],
+   "whiteList": "a,b"
+}
+```
 
-> Tip: Many popular extensions utilize animations. This is an excellent way to show off your extension! We recommend short, focused animations that are easy to follow.
+- `excludedFloders`： 不进行扫描的目录名
+- `includedFileSubfixes`：需要扫描的文件后缀名
+- `excludedFileNames`：不进行扫描的文件名
+- `whiteLis`t：单词白名单（支持字符串数组以及 , 分割的字符串）
 
-## Requirements
+## 视图
 
-If you have any requirements or dependencies, add a section describing those and how to install and configure them.
+插件上面存在两个按钮：
+- 按钮一：形如统计图的按钮用来扫描并打开 `web-view`
+- 按钮一：形如刷新的按钮用来扫描并打开 `tree-view`
 
-## Extension Settings
+### tree-view
 
-Include if your extension adds any VS Code settings through the `contributes.configuration` extension point.
+树视图的展示维度为：
 
-For example:
+**文件 -> 疑似拼写错误**
 
-This extension contributes the following settings:
+树形结构格式基本为：
+```
+|- fileName-[suspected spelling mistake count]
+|-- mistake1 -✓-> spelling suggestions OR :(
+|-- mistake2 -✓-> spelling suggestions OR :(
+|-- mistake3 -✓-> spelling suggestions OR :(
+|-- mistake4 -✓-> spelling suggestions OR :(
+```
+可以点击文件名以进行跳转
+### web-view
 
-* `myExtension.enable`: enable/disable this extension
-* `myExtension.thing`: set to `blah` to do something
+页面视图的展示维度为：
 
-## Known Issues
+**疑似拼写错误 -> 文件**
 
-Calling out known issues can help limit users opening duplicate issues against your extension.
+树形结构格式基本为：
+```
+    ----|- mistake1     - file-path1
+                        - file-path2
+                  
+root----|- mistake2     - file-path3
+                         
+    ----|- mistake3     - file-path4
+```
 
-## Release Notes
+可以点击文件名以进行跳转
 
-Users appreciate release notes as you update your extension.
+# Usage guide [English]
 
-### 1.0.0
+`project-spell-checker` is a vscode plugin with customizable capabilities and full project spell checking.
+The specific capabilities are divided into three.
+- Customise the range of files scanned by the plugin via the configuration file
+- `tree-view` shows suspected spelling errors under each file and suggests up to five correct word guesses
+- Show which files are suspected of having spelling errors via `web-view
 
-Initial release of ...
+Tip: `tree-view` and `web-view` both support shortcuts to files
 
-### 1.0.1
+## Configuration files
 
-Fixed issue #.
+The configuration file `spell-checker-config.json` can be placed in the `.vscode` or `.project` directories and will be read automatically by the plugin.
 
-### 1.1.0
+```
+{
+   "excludedFloders": ["node_modules", ".git", ".DS_Store"],
+   "includedFileSubfixes": [".vue", ".js"],
+   "excludedFileNames": ["en-US.js", "zh-CN.js", "iconfont.js", "zh.js", "en.js"],
+   "whiteList": "a,b"
+}
+```
 
-Added features X, Y, and Z.
+- `excludedFloders`: the names of directories not to be scanned
+- `includedFileSubfixes`: suffix names of files to be scanned
+- `excludedFileNames`: names of files not to be scanned
+- `whiteLis`t: word whitelist (supports arrays of strings as well as , split strings)
 
------------------------------------------------------------------------------------------------------------
+## View
 
-## Working with Markdown
+Two buttons exist above the plug-in.
+- Button one: a button shaped like a statistics chart to scan and open the `web-view`.
+- Button one: a button shaped like a refresher to scan and open `tree-view`
 
-**Note:** You can author your README using Visual Studio Code.  Here are some useful editor keyboard shortcuts:
+### tree-view
 
-* Split the editor (`Cmd+\` on macOS or `Ctrl+\` on Windows and Linux)
-* Toggle preview (`Shift+CMD+V` on macOS or `Shift+Ctrl+V` on Windows and Linux)
-* Press `Ctrl+Space` (Windows, Linux) or `Cmd+Space` (macOS) to see a list of Markdown snippets
+The tree view is displayed in the following dimensions.
 
-### For more information
+**document -> suspected spelling error**
 
-* [Visual Studio Code's Markdown Support](http://code.visualstudio.com/docs/languages/markdown)
-* [Markdown Syntax Reference](https://help.github.com/articles/markdown-basics/)
+The tree structure is basically formatted as.
+```
+|- fileName-[suspected spelling mistake count]
+|-- mistake1 -✓-> spelling suggestions OR :(
+|-- mistake2 -✓-> spelling suggestions OR :(
+|-- mistake3 -✓-> spelling suggestions OR :(
+|-- mistake4 -✓-> spelling suggestions OR :(
+```
+You can click on the file name to jump
+### web-view
 
-**Enjoy!**
+The display dimensions of the page view are.
+
+**suspected spelling errors -> documents**
+
+The tree structure is basically formatted as.
+```
+    ----|-mistake1      - file-path1
+                        - file-path2
+                  
+root----|-mistake2      - file-path3
+                         
+    ----|-mistake3      - file-path4
+```
+
+You can click on the file name to jump
