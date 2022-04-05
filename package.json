@@ -3,7 +3,7 @@
 	"displayName": "project-spell-checker",
 	"description": "used to check spelling mistakes of your project ",
 	"version": "0.0.1",
-	"icon": "resources/hancao.jpg",
+	"icon": "resources/head.jpg",
 	"publisher": "hancao97",
 	"engines": {
 		"vscode": "^1.49.0"
