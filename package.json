@@ -1,9 +1,9 @@
 {
 	"name": "project-spell-checker",
-	"displayName": "project-spell-checker",
+	"displayName": "Project Spell Checker",
 	"description": "used to check spelling mistakes of your project ",
-	"version": "0.0.1",
-	"icon": "resources/head.jpg",
+	"version": "0.0.2",
+	"icon": "resources/head-new.jpg",
 	"publisher": "hancao97",
 	"engines": {
 		"vscode": "^1.49.0"
