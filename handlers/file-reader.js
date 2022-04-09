@@ -72,22 +72,23 @@ const getSpellingMistakeInfo =  (fileList, checkerConfig, rootPath) => {
     const handleCurrentWord = (file) => {
         const word = currentWord.toLowerCase();
         currentWord = '';
+        let suggestions = '';
         if(word.length <= 1 || healthWordSet.has(word)) {
             return;
-        }
-        // it's not support windows, so change the check exe
-        // if(dictionaryGB.spellCheck(word) || dictionaryUS.spellCheck(word)) {
-        const suggestionsGB = dictionaryGB.getSuggestions(word, 5, 3).map(str => str.toLowerCase());
-        const suggestionsUS = dictionaryUS.getSuggestions(word, 5, 3).map(str => str.toLowerCase());
-        const suggestionsGbAndUs = [...new Set([...new Set([...suggestionsGB, ...suggestionsUS])])];
-        if(suggestionsGbAndUs.indexOf(word) != -1) {
-            healthWordSet.add(word);
-            return;
-        }
-        let suggestions = suggestionsGbAndUs.join('/');
-        if(mistakeWordMap.has(word)) {
+        } else if(mistakeWordMap.has(word)) {
+            suggestions = mistakeWordMap.get(word).suggestions;
             mistakeWordMap.get(word).files.add(file.replace(rootPath, ''));
         } else {
+            // it's not support windows, so change the check exe
+            // if(dictionaryGB.spellCheck(word) || dictionaryUS.spellCheck(word)) {
+            const suggestionsGB = dictionaryGB.getSuggestions(word, 5, 3).map(str => str.toLowerCase());
+            const suggestionsUS = dictionaryUS.getSuggestions(word, 5, 3).map(str => str.toLowerCase());
+            const suggestionsGbAndUs = [...new Set([...new Set([...suggestionsGB, ...suggestionsUS])])];
+            if(suggestionsGbAndUs.indexOf(word) != -1) {
+                healthWordSet.add(word);
+                return;
+            }
+            suggestions = suggestionsGbAndUs.join('/');
             mistakeWordMap.set(word, {suggestions,files: new Set([file.replace(rootPath, '')])});
         }
         const getBasicMistake = (word) => ({
