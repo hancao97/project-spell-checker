@@ -3,9 +3,9 @@
 		"prefix": "project-spell-checker",
 		"body": [
             "{",
-			"   \"excludedFloders\": [\"node_modules\", \".git\", \".DS_Store\"],",
+			"   \"excludedFloders\": [\"node_modules\", \".git\"],",
 			"   \"includedFileSubfixes\": [],",
-			"   \"excludedFileNames\": [],",
+			"   \"excludedFileNames\": [\".DS_Store\"],",
 			"   \"whiteList\": \"string,or,array\"",
 			"}"
 		],

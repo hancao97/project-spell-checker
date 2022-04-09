@@ -2,7 +2,8 @@ const fs = require('fs');
 const path = require('path');
 const SpellChecker = require('simple-spellchecker');
 const dictionaryGB = SpellChecker.getDictionarySync("en-GB", path.join(__dirname, '../dict'));  
-const dictionaryUS = SpellChecker.getDictionarySync("en-US", path.join(__dirname, '../dict'));  
+const dictionaryUS = SpellChecker.getDictionarySync("en-US", path.join(__dirname, '../dict')); 
+console.log(dictionaryGB.regexs) 
 const basicWhiteWords = 'num,exe,whitelist,api,checkbox,iconfont,echarts,res,req,axios,username,timestamp,charset,offline,desc,plugin,webpack,lodash,xhr,debounce,textarea,ui,stringify,jpg,jpeg,vh,vw,gif,http,https,nav,toolbar,env,ele,timeline,config,configs,unshift,clearable,calc,enum,onload,csrf,onerror,onabort,vue,vuex,dist,js,json,todo,src,vm,const,img,src,svg,tooltip,params,async,await,rgb,rgba,cn,zh,attr,attrs,init,org,css,scss,sass,util,utils,arg,png,app,href,eslint,fn,auth,inline,dom,str,admin,stylelint,pwd,typeof,num,btn,concat,prev';
 const _isDir = (path) => {
     const state = fs.statSync(path);
@@ -13,9 +14,9 @@ const getCheckerConfig = (rootPath) => {
     const projectConfigPath = path.join(rootPath, '.project/spell-checker-config.json');
     const basicWhiteList = basicWhiteWords.split(',');
     const basicConfig = {
-        excludedDirNameSet: new Set(),
+        excludedDirNameSet: new Set(["node_modules", ".git"]),
         includedFileSuffixSet: new Set(),
-        excludedFileNameSet: new Set(),
+        excludedFileNameSet: new Set([".DS_Store"]),
         whiteListSet: new Set(basicWhiteList)
     }
     let configPath;
@@ -25,10 +26,7 @@ const getCheckerConfig = (rootPath) => {
     } else if(fs.existsSync(projectConfigPath)) {
         configPath = projectConfigPath;
     } else {
-        return;
-    }
-    if(!fs.existsSync(vscodeConfigPath) && !fs.existsSync(projectConfigPath)) {
-       return basicConfig; 
+        return basicConfig;
     }
     try {
         // avoid parse error
@@ -37,13 +35,13 @@ const getCheckerConfig = (rootPath) => {
         }));
         // because of word cannot include spec chars
         // so whiteList support word connected by ‘,’ or word array
-        basicConfig.excludedDirNameSet = config.excludedFloders ? new Set(config.excludedFloders) : new Set();
-        basicConfig.includedFileSuffixSet = config.includedFileSubfixes ? new Set(config.includedFileSubfixes) : new Set();
-        basicConfig.excludedFileNameSet = config.excludedFileNames ? new Set(config.excludedFileNames) : new Set();
+        basicConfig.excludedDirNameSet = config.excludedFloders ? new Set(config.excludedFloders) : basicConfig.excludedDirNameSet;
+        basicConfig.includedFileSuffixSet = config.includedFileSubfixes ? new Set(config.includedFileSubfixes) : basicConfig.includedFileSuffixSet;
+        basicConfig.excludedFileNameSet = config.excludedFileNames ? new Set(config.excludedFileNames) : basicConfig.excludedFileNameSet;
         if(config.whiteList instanceof Array) {
-            basicConfig.whiteListSet = config.whiteList ? new Set(basicWhiteList.concat(config.whiteList)) : new Set(basicWhiteList);
+            basicConfig.whiteListSet = config.whiteList ? new Set(basicWhiteList.concat(config.whiteList)) : basicConfig.whiteListSet;
         } else {
-            basicConfig.whiteListSet = config.whiteList ? new Set(basicWhiteList.concat(config.whiteList.split(','))) : new Set(basicWhiteList);
+            basicConfig.whiteListSet = config.whiteList ? new Set(basicWhiteList.concat(config.whiteList.split(','))) : basicConfig.whiteListSet;
         }
         return basicConfig;
     } catch(err) {
@@ -58,7 +56,7 @@ const getFileList = (dirPath, checkerConfig) => {
         const childPath = path.join(dirPath, item);
         if (_isDir(childPath) && !checkerConfig.excludedDirNameSet.has(item)) {
             fileList.push(...getFileList(childPath, checkerConfig));
-        } else if (!_isDir(childPath) && checkerConfig.includedFileSuffixSet.has(path.extname(item)) && !checkerConfig.excludedFileNameSet.has(item)) {
+        } else if (!_isDir(childPath) &&(checkerConfig.includedFileSuffixSet.size == 0 || checkerConfig.includedFileSuffixSet.has(path.extname(item))) && !checkerConfig.excludedFileNameSet.has(item)) {
             fileList.push(childPath);
         }
     }

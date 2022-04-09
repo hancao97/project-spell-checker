@@ -7,7 +7,7 @@ function activate(context) {
 	const getMistakeInfo = () => {
 		const rootInfo = vscode.workspace.workspaceFolders[0];
 		if(!rootInfo) return {};
-		const rootPath = rootInfo.uri.path;
+		const rootPath = rootInfo.uri.fsPath;
 		const checkerConfig = getCheckerConfig(rootPath);
 		const fileList = getFileList(rootPath, checkerConfig);
 		const { spellingMistakeInfo, mistakeWordInfo } = getSpellingMistakeInfo(fileList, checkerConfig, rootPath);
@@ -15,8 +15,17 @@ function activate(context) {
 	}	
 	let refresh = vscode.commands.registerCommand('project-spell-checker.refresh', function () {
 		vscode.window.showInformationMessage('start checking suspected spelling mistakes...');
-		const { spellingMistakeInfo } = getMistakeInfo();
-		if(spellingMistakeInfo) TreeViewProvider.initTreeView(spellingMistakeInfo);
+		vscode.window.showInformationMessage('This may take a long time. Please be patient～');
+		const timerOut = setTimeout(() => {
+			clearTimeout(timerOut);
+			const { spellingMistakeInfo } = getMistakeInfo();
+			console.log(spellingMistakeInfo);
+			if(spellingMistakeInfo) {
+				TreeViewProvider.initTreeView(spellingMistakeInfo);
+			} else {
+				vscode.window.showInformationMessage('no suspected spelling mistakes!');
+			}
+		}, 100)
 	});
 
 	let showStatistics = vscode.commands.registerCommand('project-spell-checker.showview', function () {
