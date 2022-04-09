@@ -79,17 +79,26 @@ const getSpellingMistakeInfo =  (fileList, checkerConfig, rootPath) => {
             suggestions = mistakeWordMap.get(word).suggestions;
             mistakeWordMap.get(word).files.add(file.replace(rootPath, ''));
         } else {
-            // it's not support windows, so change the check exe
+            // it's not support windows, so change the check exe.
+            // by this way, we can change lowercase to compare
             // if(dictionaryGB.spellCheck(word) || dictionaryUS.spellCheck(word)) {
-            const suggestionsGB = dictionaryGB.getSuggestions(word, 5, 3).map(str => str.toLowerCase());
-            const suggestionsUS = dictionaryUS.getSuggestions(word, 5, 3).map(str => str.toLowerCase());
-            const suggestionsGbAndUs = [...new Set([...new Set([...suggestionsGB, ...suggestionsUS])])];
-            if(suggestionsGbAndUs.indexOf(word) != -1) {
+            const suggestionsGbAndUs = new Set();
+            dictionaryGB.getSuggestions(word, 5, 3).forEach(str => {
+                if(!str.includes('\'')) {
+                    suggestionsGbAndUs.add(str.toLowerCase());
+                }
+            })
+            dictionaryUS.getSuggestions(word, 5, 3).forEach(str => {
+                if(!str.includes('\'')) {
+                    suggestionsGbAndUs.add(str.toLowerCase());
+                }
+            })
+            if(suggestionsGbAndUs.has(word)) {
                 healthWordSet.add(word);
                 return;
             }
-            suggestions = suggestionsGbAndUs.join('/');
-            mistakeWordMap.set(word, {suggestions,files: new Set([file.replace(rootPath, '')])});
+            suggestions = [...suggestionsGbAndUs].join('/');
+            mistakeWordMap.set(word, {suggestions, files: new Set([file.replace(rootPath, '')])});
         }
         const getBasicMistake = (word) => ({
             count: 1,
