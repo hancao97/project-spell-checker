@@ -1,4 +1,5 @@
 # 使用指南「Chinese」
+> 提醒：为了解决 windows 兼容性问题，性能有所下降
 
 `project-spell-checker` 是具备自定义能力并完成全项目拼写检查的 vscode 插件。
 具体能力分为三个：
@@ -24,7 +25,7 @@
 - `excludedFloders`： 不进行扫描的目录名
 - `includedFileSubfixes`：需要扫描的文件后缀名
 - `excludedFileNames`：不进行扫描的文件名
-- `whiteLis`t：单词白名单（支持字符串数组以及 , 分割的字符串）
+- `whiteList`：单词白名单（支持字符串数组以及 , 分割的字符串）
 
 ## 视图
 
@@ -66,6 +67,7 @@ root----|- mistake2     - file-path3
 可以点击文件名以进行跳转
 
 # Usage guide [English]
+> Reminder: performance has been reduced to address windows compatibility issues
 
 `project-spell-checker` is a vscode plugin with customizable capabilities and full project spell checking.
 The specific capabilities are divided into three.
@@ -91,7 +93,7 @@ The configuration file `spell-checker-config.json` can be placed in the `.vscode
 - `excludedFloders`: the names of directories not to be scanned
 - `includedFileSubfixes`: suffix names of files to be scanned
 - `excludedFileNames`: names of files not to be scanned
-- `whiteLis`t: word whitelist (supports arrays of strings as well as , split strings)
+- `whiteList`: word whitelist (supports arrays of strings as well as , split strings)
 
 ## View
 

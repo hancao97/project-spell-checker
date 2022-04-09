@@ -2,9 +2,8 @@ const fs = require('fs');
 const path = require('path');
 const SpellChecker = require('simple-spellchecker');
 const dictionaryGB = SpellChecker.getDictionarySync("en-GB", path.join(__dirname, '../dict'));  
-const dictionaryUS = SpellChecker.getDictionarySync("en-US", path.join(__dirname, '../dict')); 
-console.log(dictionaryGB.regexs) 
-const basicWhiteWords = 'num,exe,whitelist,api,checkbox,iconfont,echarts,res,req,axios,username,timestamp,charset,offline,desc,plugin,webpack,lodash,xhr,debounce,textarea,ui,stringify,jpg,jpeg,vh,vw,gif,http,https,nav,toolbar,env,ele,timeline,config,configs,unshift,clearable,calc,enum,onload,csrf,onerror,onabort,vue,vuex,dist,js,json,todo,src,vm,const,img,src,svg,tooltip,params,async,await,rgb,rgba,cn,zh,attr,attrs,init,org,css,scss,sass,util,utils,arg,png,app,href,eslint,fn,auth,inline,dom,str,admin,stylelint,pwd,typeof,num,btn,concat,prev';
+const dictionaryUS = SpellChecker.getDictionarySync("en-US", path.join(__dirname, '../dict'));  
+const basicWhiteWords = 'redis,div,dialog,num,exe,whitelist,api,checkbox,iconfont,echarts,res,req,axios,username,timestamp,charset,offline,desc,plugin,webpack,lodash,xhr,debounce,textarea,ui,stringify,jpg,jpeg,vh,vw,gif,http,https,nav,toolbar,env,ele,timeline,config,configs,unshift,clearable,calc,enum,onload,csrf,onerror,onabort,vue,vuex,dist,js,json,todo,src,vm,const,img,src,svg,tooltip,params,async,await,rgb,rgba,cn,zh,attr,attrs,init,org,css,scss,sass,util,utils,arg,png,app,href,eslint,fn,auth,inline,dom,str,admin,stylelint,pwd,typeof,num,btn,concat,prev';
 const _isDir = (path) => {
     const state = fs.statSync(path);
     return !state.isFile();
@@ -67,7 +66,7 @@ const getSpellingMistakeInfo =  (fileList, checkerConfig, rootPath) => {
     let currentWord = '';
     const mistakeInfoMap = new Map();
     // use set or map to improve performance
-    const healthWordSet = new Set();
+    const healthWordSet = new Set([...checkerConfig.whiteListSet]);
     // use to record word => suggestions & files reflect
     const mistakeWordMap = new Map();
     const handleCurrentWord = (file) => {
@@ -76,16 +75,19 @@ const getSpellingMistakeInfo =  (fileList, checkerConfig, rootPath) => {
         if(word.length <= 1 || healthWordSet.has(word)) {
             return;
         }
-        if(dictionaryGB.spellCheck(word) || dictionaryUS.spellCheck(word) || checkerConfig.whiteListSet.has(word)) {
+        // it's not support windows, so change the check exe
+        // if(dictionaryGB.spellCheck(word) || dictionaryUS.spellCheck(word)) {
+        const suggestionsGB = dictionaryGB.getSuggestions(word, 5, 3).map(str => str.toLowerCase());
+        const suggestionsUS = dictionaryUS.getSuggestions(word, 5, 3).map(str => str.toLowerCase());
+        const suggestionsGbAndUs = [...new Set([...new Set([...suggestionsGB, ...suggestionsUS])])];
+        if(suggestionsGbAndUs.indexOf(word) != -1) {
             healthWordSet.add(word);
             return;
         }
-        let suggestions;
+        let suggestions = suggestionsGbAndUs.join('/');
         if(mistakeWordMap.has(word)) {
-            suggestions = mistakeWordMap.get(word).suggestions;
             mistakeWordMap.get(word).files.add(file.replace(rootPath, ''));
         } else {
-            suggestions = dictionaryGB.getSuggestions(word, 5, 3).join('/');
             mistakeWordMap.set(word, {suggestions,files: new Set([file.replace(rootPath, '')])});
         }
         const getBasicMistake = (word) => ({

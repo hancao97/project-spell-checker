@@ -2,7 +2,7 @@
 	"name": "project-spell-checker",
 	"displayName": "Project Spell Checker",
 	"description": "used to check spelling mistakes of your project ",
-	"version": "0.0.3",
+	"version": "0.0.4",
 	"icon": "resources/head-new.jpg",
 	"publisher": "hancao97",
 	"engines": {
